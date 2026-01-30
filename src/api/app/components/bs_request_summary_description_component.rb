@@ -53,18 +53,6 @@ class BsRequestSummaryDescriptionComponent < ApplicationComponent
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
-  def delete_target(actions)
-    target = actions.map do |a|
-      string = ''
-      string += "repository #{tag.b(a.target_repository)} for " if a.target_repository
-      string += a.target_package ? 'package ' : 'project '
-      string += "#{highlight_project(a.target_project)} "
-      string += "/ #{highlight_package(a.target_project, a.target_package)}" if a.target_package
-      string
-    end
-    target.to_sentence
-  end
-
   def role_target(actions)
     target = actions.map do |a|
       "#{a.person_name ? 'user' : 'group'} #{highlight_user(a.person_name)} #{highlight_group(a.group_name)} as #{a.type == 'set_bugowner' ? "the #{tag.b('bugowner')}" : "a #{tag.b(a.role)}"}"

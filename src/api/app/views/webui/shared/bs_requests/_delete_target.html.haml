@@ -1,0 +1,9 @@
+- targets = actions.map do |a|
+  - repo = a.target_repository.present? ? safe_join(['repository', tag.b(a.target_repository), 'for'], ' ') : nil
+  - kind = a.target_package.present? ? 'package' : 'project'
+  - project = a.target_project.present? ? link_to(a.target_project, project_show_path(a.target_project)) : nil
+  - package = a.target_package.present? ? safe_join(['/', link_to(a.target_package, package_show_path(a.target_project, a.target_package))], ' ') : nil
+
+  - safe_join([repo, kind, project, package].compact, ' ')
+
+= safe_join(targets, ', ')

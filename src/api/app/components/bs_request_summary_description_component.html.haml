@@ -8,7 +8,7 @@
       = target_container(actions)
     - when 'delete'
       Delete
-      = sanitize(delete_target(actions))
+      = render partial: 'webui/shared/bs_requests/delete_target', locals: { actions: actions }
     - when 'add_role', 'set_bugowner'
       Assign
       = sanitize(role_target(actions))
