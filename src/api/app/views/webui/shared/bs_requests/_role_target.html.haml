@@ -1,18 +1,21 @@
 - targets = actions.map do |a|
-  - who = a.person_name.present? ?
-    "user #{link_to(a.person_name, user_path(a.person_name))}" :
-    "group #{link_to(a.group_name, group_path(a.group_name))}"
+  - if a.person_name.present?
+    - who = safe_join(['user', link_to(a.person_name, user_path(a.person_name))], ' ')
+  - elsif a.group_name.present?
+    - who = safe_join(['group', link_to(a.group_name, group_path(a.group_name))], ' ')
 
-  - role_label = a.type == 'set_bugowner' ?
-    "the #{tag.b('bugowner')}" :
-    "a #{tag.b(a.role)}"
+  - role_label = nil
+  - if a.type == 'set_bugowner'
+    - role_label = safe_join(['the', tag.b('bugowner')], ' ')
+  - else
+    - role_label = safe_join(['a', tag.b(a.role)], ' ')
 
-  - "#{who} as #{role_label}"
-- end.compact
+  - next if who.blank? || role_label.blank?
+
+  - safe_join([who, 'as', role_label], ' ')
 
 - if targets.count > 3
   - other = targets.count - 2
   - targets = targets.take(2) + ["#{other} #{'other'.pluralize(other)}"]
 
-= sanitize(targets.to_sentence)
-
+= safe_join(targets, ', ')
