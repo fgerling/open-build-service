@@ -1,0 +1,36 @@
+- source_pairs = actions.map { |a| [a.source_project, a.source_package] }.uniq
+
+- source_package_links = source_pairs.map do |pr, pk|
+  - next if pr.blank? || pk.blank?
+  - link_to(pk, package_show_path(pr, pk))
+- packages_count = source_package_links.count
+
+- source_package_display_links = source_package_links
+- if source_package_display_links.count > 3
+  - other = source_package_display_links.count - 2
+  - source_package_display_links = source_package_display_links.take(2) + ["#{other} #{'other'.pluralize(other)}"]
+
+- source_projects = actions.map(&:source_project).uniq.compact
+- source_project_links = source_projects.map { |pr| link_to(pr, project_show_path(pr)) }
+
+- source_project_display_links = source_project_links
+- if source_project_display_links.count > 3
+  - other = source_project_display_links.count - 2
+  - source_project_display_links = source_project_display_links.take(2) + ["#{other} #{'other'.pluralize(other)}"]
+
+- packages_list = safe_join(source_package_display_links, ', ')
+- projects_list = safe_join(source_project_display_links, ', ')
+
+- if actions.length == 1 && packages_count == 1
+  - text = safe_join(['package', source_project_display_links.first, '/', source_package_display_links.first], ' ')
+- elsif packages_count.positive?
+  - text = safe_join( [ "#{'package'.pluralize(source_package_display_links.count)}", packages_list, 'from', "#{'project'.pluralize(source_project_display_links.count)}", projects_list ], ' ')
+- else
+  - text = safe_join( [ "#{'project'.pluralize(source_project_display_links.count)}", projects_list ], ' ')
+
+- if packages_count <= 3
+  = tag.span(text)
+- else
+  - popover_items = source_pairs.map { |pr, pk| "#{pr} / #{pk}" }.uniq.join(', ')
+  = tag.span(text, data: { bs_toggle: 'popover', bs_content: popover_items })
+

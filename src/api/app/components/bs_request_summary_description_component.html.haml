@@ -3,7 +3,7 @@
     - case type
     - when 'submit'
       Submit
-      = source_container(actions)
+      = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
       = target_container(actions)
     - when 'delete'
@@ -16,24 +16,24 @@
       = target_container(actions)
     - when 'change_devel'
       Set
-      = source_container(actions)
+      = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       to be
       %b devel
       project/package of
       = target_container(actions)
     - when 'maintenance_incident'
       Submit update from
-      = source_container(actions)
+      = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
       = target_container(actions)
     - when 'maintenance_release'
       Maintenance release
-      = source_container(actions)
+      = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
       = target_container(actions)
     - when 'release'
       Release
-      = source_container(actions)
+      = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
       = target_container(actions)
 = to_sentence(action_descriptions)
