@@ -1,0 +1,18 @@
+- targets = actions.map do |a|
+  - who = a.person_name.present? ?
+    "user #{link_to(a.person_name, user_path(a.person_name))}" :
+    "group #{link_to(a.group_name, group_path(a.group_name))}"
+
+  - role_label = a.type == 'set_bugowner' ?
+    "the #{tag.b('bugowner')}" :
+    "a #{tag.b(a.role)}"
+
+  - "#{who} as #{role_label}"
+- end.compact
+
+- if targets.count > 3
+  - other = targets.count - 2
+  - targets = targets.take(2) + ["#{other} #{'other'.pluralize(other)}"]
+
+= sanitize(targets.to_sentence)
+

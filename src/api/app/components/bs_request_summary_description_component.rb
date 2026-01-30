@@ -53,13 +53,6 @@ class BsRequestSummaryDescriptionComponent < ApplicationComponent
   # rubocop:enable Metrics/CyclomaticComplexity
   # rubocop:enable Metrics/PerceivedComplexity
 
-  def role_target(actions)
-    target = actions.map do |a|
-      "#{a.person_name ? 'user' : 'group'} #{highlight_user(a.person_name)} #{highlight_group(a.group_name)} as #{a.type == 'set_bugowner' ? "the #{tag.b('bugowner')}" : "a #{tag.b(a.role)}"}"
-    end
-    shorten_list(target).to_sentence
-  end
-
   def highlight_project(project)
     return unless project
 
@@ -70,18 +63,6 @@ class BsRequestSummaryDescriptionComponent < ApplicationComponent
     return unless project && package
 
     link_to(package, package_show_path(project, package))
-  end
-
-  def highlight_user(user)
-    return unless user
-
-    link_to(user, user_path(user))
-  end
-
-  def highlight_group(group)
-    return unless group
-
-    link_to(group, group_path(group))
   end
 
   def shorten_list(array, limit = 3)

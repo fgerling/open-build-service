@@ -11,7 +11,7 @@
       = render partial: 'webui/shared/bs_requests/delete_target', locals: { actions: actions }
     - when 'add_role', 'set_bugowner'
       Assign
-      = sanitize(role_target(actions))
+      = render partial: 'webui/shared/bs_requests/role_target', locals: { actions: actions }
       for
       = target_container(actions)
     - when 'change_devel'
