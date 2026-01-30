@@ -5,7 +5,7 @@
       Submit
       = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
-      = target_container(actions)
+      = render partial: 'webui/shared/bs_requests/target_container', locals: { actions: actions }
     - when 'delete'
       Delete
       = render partial: 'webui/shared/bs_requests/delete_target', locals: { actions: actions }
@@ -13,27 +13,27 @@
       Assign
       = render partial: 'webui/shared/bs_requests/role_target', locals: { actions: actions }
       for
-      = target_container(actions)
+      = render partial: 'webui/shared/bs_requests/target_container', locals: { actions: actions }
     - when 'change_devel'
       Set
       = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       to be
       %b devel
       project/package of
-      = target_container(actions)
+      = render partial: 'webui/shared/bs_requests/target_container', locals: { actions: actions }
     - when 'maintenance_incident'
       Submit update from
       = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
-      = target_container(actions)
+      = render partial: 'webui/shared/bs_requests/target_container', locals: { actions: actions }
     - when 'maintenance_release'
       Maintenance release
       = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
-      = target_container(actions)
+      = render partial: 'webui/shared/bs_requests/target_container', locals: { actions: actions }
     - when 'release'
       Release
       = render partial: 'webui/shared/bs_requests/source_container', locals: { actions: actions }
       %i.fas.fa-long-arrow-alt-right.text-info.mx-2
-      = target_container(actions)
+      = render partial: 'webui/shared/bs_requests/target_container', locals: { actions: actions }
 = to_sentence(action_descriptions)

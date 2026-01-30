@@ -1,0 +1,29 @@
+- target_pairs = actions.map { |a| [a.target_project, a.target_package] }.uniq
+
+- target_projects = actions.map(&:target_project).uniq.compact
+- project_links = target_projects.map { |pr| link_to(pr, project_show_path(pr)) }
+- projects_count = project_links.count
+
+- project_display_links = project_links
+- if project_display_links.count > 3
+  - other = project_display_links.count - 2
+  - project_display_links = project_display_links.take(2) + ["#{other} #{'other'.pluralize(other)}"]
+
+- projects_list = safe_join(project_display_links, ', ')
+
+- if actions.length == 1 && actions.first.target_package.present?
+  - pr = actions.first.target_project
+  - pk = actions.first.target_package
+  - text = safe_join(['package', link_to(pr, project_show_path(pr)), '/', link_to(pk, package_show_path(pr, pk))], ' ')
+- elsif actions.any?(&:target_package)
+  - pkg_count = actions.map(&:target_package).uniq.count
+  - text = safe_join(["#{'package'.pluralize(pkg_count)} in", "#{'project'.pluralize(projects_count)}", projects_list], ' ')
+- else
+  - text = safe_join(["#{'project'.pluralize(projects_count)}", projects_list], ' ')
+
+- if target_pairs.count <= 1
+  = tag.span(text)
+- else
+  - popover_items = target_pairs.map { |pr, pk| "#{pr} / #{pk}" }.uniq.join(', ')
+  = tag.span(text, data: { bs_toggle: 'popover', bs_content: popover_items })
+
