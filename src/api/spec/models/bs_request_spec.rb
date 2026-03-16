@@ -719,4 +719,38 @@ RSpec.describe BsRequest, :vcr do
       end
     end
   end
+
+  describe '#target_maintainer?' do
+    context 'when user can modify the target package' do
+      before { target_package.project.add_maintainer(user) }
+
+      it { expect(submit_request.target_maintainer?(user)).to be(true) }
+    end
+
+    context 'when user cannot modify the target package' do
+      it { expect(submit_request.target_maintainer?(user)).to be(false) }
+    end
+
+    context 'when action has no target package (only target project)' do
+      let(:delete_project_request) do
+        create(:delete_bs_request, creator: user, reviewer: user, target_project: target_project)
+      end
+
+      before { target_project.add_maintainer(user) }
+
+      it { expect(delete_project_request.target_maintainer?(user)).to be(true) }
+    end
+  end
+
+  describe '#source_maintainer?' do
+    context 'when user can modify the source package' do
+      before { source_package.project.add_maintainer(user) }
+
+      it { expect(submit_request.source_maintainer?(user)).to be(true) }
+    end
+
+    context 'when user cannot modify the source package' do
+      it { expect(submit_request.source_maintainer?(user)).to be(false) }
+    end
+  end
 end
