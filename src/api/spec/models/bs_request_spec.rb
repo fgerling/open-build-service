@@ -729,7 +729,7 @@ RSpec.describe BsRequest, :vcr do
 
     before do
       bs_request.bs_request_actions = [action]
-      allow(action).to receive_messages(source_project_object: source_project, source_package_object: source_package)
+      allow(action).to receive_messages(source_project_object: source_project, source_package: 'source_package')
     end
 
     context 'when the request has multiple actions' do
@@ -753,7 +753,8 @@ RSpec.describe BsRequest, :vcr do
     context 'when the action is a submit action' do
       context 'when the source project does not have an anitya distribution name' do
         before do
-          allow(source_project).to receive(:anitya_distribution_name).and_return(nil)
+          allow(source_project).to receive(:find_package).with('source_package').and_return(source_package)
+          allow(source_package).to receive(:project).and_return(instance_double(Project, anitya_distribution_name: nil))
         end
 
         it 'returns nil' do
@@ -763,7 +764,8 @@ RSpec.describe BsRequest, :vcr do
 
       context 'when the source project has an anitya distribution name' do
         before do
-          allow(source_project).to receive(:anitya_distribution_name).and_return('openSUSE')
+          allow(source_project).to receive(:find_package).with('source_package').and_return(source_package)
+          allow(source_package).to receive(:project).and_return(instance_double(Project, anitya_distribution_name: 'openSUSE'))
         end
 
         context 'when the source package has no latest local version' do
@@ -785,6 +787,22 @@ RSpec.describe BsRequest, :vcr do
             expect(bs_request.source_package_latest_local_version).to eq('1.0.0')
           end
         end
+
+        context 'when the source package is resolved through a linked project' do
+          let(:base_project) { create(:project, name: 'base:source') }
+          let(:linked_project) { create(:project, name: 'home:user:branch', link_to: base_project) }
+          let(:linked_source_package) { create(:package, name: 'source_package', project: base_project) }
+
+          before do
+            base_project.update_column(:anitya_distribution_name, 'openSUSE')
+            create(:package_version_local, package: linked_source_package, version: '3.2.1')
+            allow(action).to receive_messages(source_project_object: linked_project, source_package: 'source_package')
+          end
+
+          it 'returns the version from the linked package' do
+            expect(bs_request.source_package_latest_local_version).to eq('3.2.1')
+          end
+        end
       end
     end
   end
@@ -798,13 +816,14 @@ RSpec.describe BsRequest, :vcr do
 
     before do
       bs_request.bs_request_actions = [action]
-      allow(action).to receive_messages(target_project_object: target_project, target_package_object: target_package)
+      allow(action).to receive_messages(target_project_object: target_project, target_package: 'target_package')
     end
 
     context 'when the action is a submit action' do
       context 'when the target project has an anitya distribution name' do
         before do
-          allow(target_project).to receive(:anitya_distribution_name).and_return('openSUSE')
+          allow(target_project).to receive(:find_package).with('target_package').and_return(target_package)
+          allow(target_package).to receive(:project).and_return(instance_double(Project, anitya_distribution_name: 'openSUSE'))
         end
 
         context 'when the target package has a latest local version' do
@@ -814,6 +833,22 @@ RSpec.describe BsRequest, :vcr do
 
           it 'returns the version' do
             expect(bs_request.target_package_latest_local_version).to eq('2.5.1')
+          end
+        end
+
+        context 'when the target package is resolved through a linked project' do
+          let(:base_project) { create(:project, name: 'base:target') }
+          let(:linked_project) { create(:project, name: 'home:user:target', link_to: base_project) }
+          let(:linked_target_package) { create(:package, name: 'target_package', project: base_project) }
+
+          before do
+            base_project.update_column(:anitya_distribution_name, 'openSUSE')
+            create(:package_version_local, package: linked_target_package, version: '4.7.0')
+            allow(action).to receive_messages(target_project_object: linked_project, target_package: 'target_package')
+          end
+
+          it 'returns the version from the linked package' do
+            expect(bs_request.target_package_latest_local_version).to eq('4.7.0')
           end
         end
       end
